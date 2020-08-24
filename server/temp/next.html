@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<title>
+			Hansen's corner
+		</title>
+	</head>
+    <body>
+	  <p>
+	  It's just for you baby girl
+	   </p>
+        <script type="text/javascript" src="https://rawgit.com/131/h264-live-player/master/vendor/dist/http-live-player.js"></script>
+        <script>
+            var canvas = document.createElement("canvas");
+            document.body.appendChild(canvas);
+
+            var wsavc = new WSAvcPlayer(canvas, "webgl");
+
+             wsavc.connect('ws://75.22.5.105:4000/video-stream');    
+	</script>
+    </body>
+</html>
