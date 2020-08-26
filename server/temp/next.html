@@ -6,16 +6,40 @@
 	</head>
     <body>
 	  <p>
-	  It's just for you baby girl
+	  
 	   </p>
+	<script type="text/javascript"> </script>
         <script type="text/javascript" src="https://rawgit.com/131/h264-live-player/master/vendor/dist/http-live-player.js"></script>
         <script>
-            var canvas = document.createElement("canvas");
+	    var canvas = document.createElement("canvas");
             document.body.appendChild(canvas);
 
+            var wsservos = new WebSocket('ws://75.22.5.105:4000/servos');
+	    
             var wsavc = new WSAvcPlayer(canvas, "webgl");
+            wsavc.connect('ws://75.22.5.105:4000/video-stream'); 
+            
+	    
+            function logKey(e){
+	        //if(e.keyCode == 87){
+		    //console.log('w');
+	             wsservos.onopen = () => wsservos.send('test test');
+	        //}
+	    }
+	    
+            
+	    document.addEventListener('keypress', logKey);
+            wsservos.onopen = () => wsservos.send('this is test 1');
 
-             wsavc.connect('ws://75.22.5.105:4000/video-stream');    
-	</script>
+
+
+ 	    wsservos.onopen = () => wsservos.send('this is test 2');
+
+
+	    wsservos.onopen = () => wsservos.send('this is test 3');
+
+
+           
+    	</script>
     </body>
 </html>

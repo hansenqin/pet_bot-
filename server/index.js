@@ -1,3 +1,10 @@
+var Gpio = require('onoff').Gpio;
+var Piservo = require('pi-servo');
+
+var rightservo = new Piservo(17);
+var leftservo = new Piservo(27);
+var camservo = new Piservo(22);
+
 const express = require('express');
 const raspividStream = require('raspivid-stream');
 
@@ -11,8 +18,16 @@ app.use(express.static('public'));
 app.post('/login', urlencodedParser, function (req, res) {
 	console.log(req.body.fname);
 	if (req.body.fname == "hansen302"){
-		res.sendFile('/home/pi/server/temp/next.html');
+		res.sendFile('/home/pi/pet_bot-/server/temp/next.html');
 	}
+});
+
+app.ws('/servos',(ws,req) =>{
+   console.log('connected to servo');  
+   ws.onmessage = function(e){
+      console.log('recieved data');
+      console.log(e.data);      
+   }
 });
 
 
@@ -28,19 +43,16 @@ app.ws('/video-stream', (ws, req) => {
     var videoStream = raspividStream({ rotation: 180 });
 
     videoStream.on('data', (data) => {
-        ws.send(data, { binary: true }, (error) => { if (error) console.error(error); });
+        ws.send(data, { binary: true }, (error) => {if (error) console.error(error); });
     });
 
     ws.on('close', () => {
         console.log('Client left');
         videoStream.removeAllListeners('data');
-    });
+    }); 
 });
 
 
-app.use(function (err, req, res, next) {
-  console.error(err);
-  next(err);
-})
+
 
 app.listen(4000, () => console.log('Server started on 4000'));
