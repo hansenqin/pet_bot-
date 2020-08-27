@@ -15,28 +15,41 @@
             document.body.appendChild(canvas);
 
             var wsservos = new WebSocket('ws://75.22.5.105:4000/servos');
+            var wscamservos = new WebSocket('ws://75.22.5.105:4000/cam');
+
 	    
             var wsavc = new WSAvcPlayer(canvas, "webgl");
             wsavc.connect('ws://75.22.5.105:4000/video-stream'); 
             
 	    
-            function logKey(e){
-	        //if(e.keyCode == 87){
-		    //console.log('w');
-	             wsservos.onopen = () => wsservos.send('test test');
-	        //}
-	    }
-	    
-            
-	    document.addEventListener('keypress', logKey);
-            wsservos.onopen = () => wsservos.send('this is test 1');
+	      document.addEventListener('keydown', (e) => {
+		 if (!wsservos) {
+			showMessage("No WebSocket connection");
+			return ;
+		 }else if(e.key == "w"){
+			wsservos.send("forward"); 
+		 }else if(e.key == "d"){
+			wsservos.send("right"); 
+		 }else if(e.key == "a"){
+			wsservos.send("left"); 
+		 }else if(e.key == "s"){
+			wsservos.send("reverse"); 
+		 }else if(e.key == "o"){
+			wscamservos.send("Up"); 
+		 }else if(e.key == "l"){
+			wscamservos.send("Down"); 
+		 }		
+	    });          
 
+              document.addEventListener('keyup', (e) => {
+		 if (!wsservos) {
+			showMessage("No WebSocket connection");
+			return ;
+		 }
+                 wsservos.send("nothing");
+                 wscamservos.send("nothing");
 
-
- 	    wsservos.onopen = () => wsservos.send('this is test 2');
-
-
-	    wsservos.onopen = () => wsservos.send('this is test 3');
+	    });          
 
 
            

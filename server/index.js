@@ -1,9 +1,11 @@
-var Gpio = require('onoff').Gpio;
-var Piservo = require('pi-servo');
+const Gpio= require('pigpio').Gpio; 
+const motorRight = new Gpio(27, {mode: Gpio.OUTPUT});
+const motorLeft = new Gpio(22, {mode: Gpio.OUTPUT});
+const camServo = new Gpio(17, {mode: Gpio.OUTPUT});
 
-var rightservo = new Piservo(17);
-var leftservo = new Piservo(27);
-var camservo = new Piservo(22);
+
+let pos = 1000;
+let increment = 20;
 
 const express = require('express');
 const raspividStream = require('raspivid-stream');
@@ -25,9 +27,46 @@ app.post('/login', urlencodedParser, function (req, res) {
 app.ws('/servos',(ws,req) =>{
    console.log('connected to servo');  
    ws.onmessage = function(e){
-      console.log('recieved data');
-      console.log(e.data);      
+      if(e.data == "nothing"){
+         console.log(e.data);
+         motorRight.servoWrite(1500);
+	 motorLeft.servoWrite(1550);
+      }else if(e.data == "reverse"){
+         console.log(e.data);
+         motorRight.servoWrite(1000);
+         motorLeft.servoWrite(2000);
+      }else if(e.data == "right"){
+         console.log(e.data);
+         motorRight.servoWrite(1700);
+         motorLeft.servoWrite(1700);
+      }else if(e.data == "left"){
+         console.log(e.data);
+         motorRight.servoWrite(1300);
+         motorLeft.servoWrite(1300);
+      }else if(e.data == "forward"){
+	 console.log(e.data);
+	 motorRight.servoWrite(2000);
+         motorLeft.servoWrite(1000);
+      }
    }
+});
+
+app.ws('/cam',(ws,req) =>{
+    console.log('connected to camera servo');
+    ws.onmessage = function(e){
+      if(e.data == "nothing"){
+         console.log(e.data);
+         camServo.servoWrite(pos);
+      }else if(e.data == "Up"){
+         console.log(e.data);
+	 pos = pos + increment;
+         camServo.servoWrite(pos);
+      }else if(e.data == "Down"){
+         console.log(e.data);
+	 pos = pos - increment;
+         camServo.servoWrite(pos);
+      }
+    }
 });
 
 
@@ -52,6 +91,8 @@ app.ws('/video-stream', (ws, req) => {
     }); 
 });
 
+
+console.log("hello");
 
 
 
